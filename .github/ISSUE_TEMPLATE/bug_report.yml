@@ -1,0 +1,105 @@
+name: "Bug report"
+description: Flag something that is broken or behaving incorrectly in the NCT Trials Explorer.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for flagging this. Fill in what you can — even a partial report helps.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the tool is affected?
+      options:
+        - Chatbot interface (Gradio / LangGraph)
+        - Query tool (scripts/NCT_query.py)
+        - ClinicalTrials.gov API request / response
+        - c-trials MCP connector
+        - Embedding / Chroma / RAG
+        - Data storage (all_data/, JSON/CSV/Parquet)
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What's wrong?
+      description: A clear, one- or two-sentence description of the bug.
+      placeholder: e.g. The search query sent to the API is missing filter terms, so results come back too broad.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: query
+    attributes:
+      label: Query / request details
+      description: >
+        The user prompt or search text, and — if you have it — the actual
+        query string or URL sent to ClinicalTrials.gov (query.term, filters,
+        pageSize, etc.). This is the key info for API/query bugs.
+      render: text
+      placeholder: |
+        User prompt: "oncology trials for lung cancer, phase 2, recruiting"
+        API URL: https://clinicaltrials.gov/api/v2/studies?query.term=...&filter...=...
+    validations:
+      required: false
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: How can someone else trigger this?
+      placeholder: |
+        1. Launch the chatbot
+        2. Ask "..."
+        3. Observe the query / response
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / error output
+      description: Paste any traceback or relevant lines from logs/. Automatically formatted as code.
+      render: shell
+    validations:
+      required: false
+
+  - type: input
+    id: nct
+    attributes:
+      label: Example NCT ID (optional)
+      description: An NCT number that shows the problem, if applicable.
+      placeholder: NCT01234567
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Anything relevant about how you ran it.
+      placeholder: |
+        - OS: macOS
+        - Python / uv version:
+        - Branch / commit:
+    validations:
+      required: false
