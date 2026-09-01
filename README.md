@@ -1,10 +1,20 @@
 ### Description
-Goal of this project is to create an explorer that can scrape the NCT 
-clinicaltrials.gov website for different trials. There will be different
-phases of this project described below.
+This repo contains a chatbot used to query the clinicaltrials.gov API. 
 
-#### Phase 1:
-Create script that is able to query the REST API associated with NCT
+### Startup
+To use agent, clone repo and run
+```
+cd src/
+python app.py
+```
+
+This currently opens up prototyp gradio chat-interface. 
+
+### Project:
+Project will be developed in several phases.
+
+#### Phase 1 (in-progress):
+Create agent given tool to query clinicaltrials API
 
 #### Phase 2:
 Associate the trials with emerging biotech companies
