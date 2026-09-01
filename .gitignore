@@ -11,7 +11,6 @@ wheels/
 
 # Virtual environments
 .venv
-uv.lock
 nct-ai-env
 
 # Secrets
