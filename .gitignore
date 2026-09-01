@@ -1,0 +1,49 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.deepeval_telemetry.txt
+.DS_Store
+**/.deepeval/*
+
+# Virtual environments
+.venv
+uv.lock
+nct-ai-env
+
+# Secrets
+*.secrets
+*.secrets_*
+.env
+.env.*
+!.env.example
+
+# AI
+.claude/
+.compound-engineering/*
+docs/
+
+# Logs
+logs/
+*.log
+
+# Caches
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Chroma vector store persistence
+chroma_db/
+.chroma/
+
+# documents
+*.sqlite
+*.jsonl
+*.htm
+*.txt
+
+*.zip
