@@ -8,6 +8,7 @@ from langchain_core.messages import AnyMessage, SystemMessage, ToolMessage
 from langgraph.checkpoint.memory import MemorySaver
 from typing_extensions import TypedDict, Annotated
 import operator
+import os
 # %%
 from pathlib import Path
 from dotenv import load_dotenv
@@ -17,9 +18,13 @@ import requests
 from utils.logger import get_logger
 # %%
 _logs = get_logger(__name__)
-# %% load .env file relative to main file
+# %% load .env and .secrets file relative to main file
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+load_dotenv(Path(__file__).resolve().parent.parent / ".secrets")
+# %% load CLAUDE models
+HAIKU = os.getenv("HAIKU")
+SONNET = os.getenv("SONNET")
+OPUS = os.getenv("OPUS")
 # %% define tool 1: call NCT API
 @tool
 def get_NCT(
@@ -139,14 +144,14 @@ def get_NCT(
         _logs.error("clinicaltrials.gov request failed: %s", exc)
         return json.dumps({"error": f"Request to clinicaltrials.gov failed: {exc}"})
 # %% define tool 2
-# %% model with tools, bind the 
+# %% create nodes
 def get_model_with_tools():
     '''
     Define the foundational model and bind tools with model
     '''
     # define model
     model = init_chat_model(
-        model="claude-haiku-4-5-20251001",
+        model=HAIKU,
         temperature=0.7
     )
     # collect tools
@@ -200,7 +205,7 @@ class MessagesState(TypedDict):
     llm_calls: int
     total_tokens: Annotated[int, operator.add]
 
-# %% 
+# %% create conditional edge
 def should_continue(state: MessagesState) -> Literal["tool_node", END]:
     '''
     Allows agent to decide whether additional tool calls are needed. 
