@@ -1,10 +1,9 @@
-# %%
 # %% import libraries
 from typing import TypedDict, Literal
 from langgraph.graph import StateGraph, START, END
 from langchain.chat_models import init_chat_model
 from langchain_core.tools import tool
-from langchain_core.messages import AnyMessage, SystemMessage, ToolMessage
+from langchain_core.messages import AnyMessage, SystemMessage, ToolMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 from typing_extensions import TypedDict, Annotated
 import operator
@@ -159,27 +158,26 @@ def get_model_with_tools():
     # bind tools to llm
     llm_with_tools = model.bind_tools(tools)
     return llm_with_tools
-
+# %%
 def llm_call(state: dict):
     '''
     Invoke the model on the conversation and append its reply to state
     '''
     model_with_tools = get_model_with_tools()
-    return {
-        "messages": [
-                    model_with_tools.invoke(
-                        [
-                            SystemMessage(
+    response = [model_with_tools.invoke(
+                        [SystemMessage(
                                 content="You are a financial analyst of biotech companies sifting through clinical trials."
                             )
                         ]
                         + state["messages"]
                     )
-                ],
-                "llm_calls": state.get('llm_calls', 0) + 1,
-                "total_tokens": state.get('total_tokens', 0)
+                ]
+    return {
+        "messages": response,
+        "llm_calls": state.get('llm_calls', 0) + 1,
+        "total_tokens": state.get('total_tokens', 0) + response[-1].usage_metadata["total_tokens"]
     }
-
+# %%
 def tool_node(state: dict):
     '''
     Function to give agent ability to call tool.

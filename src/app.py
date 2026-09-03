@@ -3,7 +3,7 @@ from NCT_chat.main import get_nct_chat
 from langchain_core.messages import HumanMessage, AIMessage
 import gradio as gr
 from dotenv import load_dotenv
-
+# %%
 from utils.logger import get_logger
 
 _logs = get_logger(__name__)
@@ -11,7 +11,7 @@ _logs = get_logger(__name__)
 # %% Load secrets/config once at import (API keys for the LLM).
 load_dotenv(".env")
 load_dotenv(".secrets")
-
+# %%
 # Compile the LangGraph agent a single time, at startup, not per message.
 agent = get_nct_chat()
 
@@ -60,20 +60,28 @@ def nct_chat(message: str, history: list[dict]) -> str:
 
     try:
         response = agent.invoke(state)
+        tokens = response["total_tokens"]
+        llm_calls = response["llm_calls"]
     except Exception as exc:  # keep the UI alive if the graph/API fails
         _logs.error("Agent invocation failed: %s", exc)
-        return f"Sorry — something went wrong handling that request: {exc}"
+        return f"Sorry — something went wrong handling that request: {exc}", state["total_tokens"], state["llm_calls"]
 
     # The last message in the returned state is the assistant's reply.
-    return response["messages"][-1].content
+    return response["messages"][-1].content, tokens, llm_calls
 
+token_box = gr.Number(label="Total Tokens", value=0)
+llm_calls_box = gr.Number(label="LLM calls", value=0)
 
-chat = gr.ChatInterface(
-    fn=nct_chat,
-    title="NCT Trials Explorer",
-    description=DESCRIPTION,
-    examples=EXAMPLES,
-)
+with gr.Blocks() as chat:
+    token_box = gr.Number(label="Total tokens", value=0)
+    llm_calls_box = gr.Number(label="Total LLM calls")
+    gr.ChatInterface(
+        fn=nct_chat,
+        title="NCT Trials Explorer",
+        description=DESCRIPTION,
+        examples=EXAMPLES,
+        additional_outputs=[token_box, llm_calls_box]
+    )
 
 if __name__ == "__main__":
     _logs.info("Starting NCT Chat App...")
